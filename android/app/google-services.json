@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "489654701677",
+    "project_id": "pokemon-battle-logger",
+    "storage_bucket": "pokemon-battle-logger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:489654701677:android:029e9add80233327b93964",
+        "android_client_info": {
+          "package_name": "voidd0g.com.pokemon_battle_logger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "489654701677-47c3r2no1mvlrhuphp1pk13qnbk4fir8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC29zJI2l6ZWjmZMegI8VqByNef4txF5Z4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "489654701677-47c3r2no1mvlrhuphp1pk13qnbk4fir8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
