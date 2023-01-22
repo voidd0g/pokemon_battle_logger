@@ -14,7 +14,7 @@ class SearchPageNotifier extends StateNotifier<SearchPageState> implements IRelo
         );
 
   @override
-  Future<void> reload() async {
+  Future<void> reload(IReloadableArg? _) async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
         newIsReloading: true,

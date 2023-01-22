@@ -3,22 +3,10 @@ import 'package:pokemon_battle_logger/views/home/home.view.dart';
 
 class AppRouting {
   static const String home = '/home';
-  static Route<dynamic> generateRoute(RouteSettings settings) {
+  static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return PageRouteBuilder(
-          settings: RouteSettings(
-            name: home,
-            arguments: settings.arguments,
-          ),
-          pageBuilder: (
-            context,
-            animation,
-            secondaryAnimation,
-          ) =>
-              const HomeView(),
-          transitionDuration: Duration.zero,
-        );
+        return null;
       case home:
         return PageRouteBuilder(
           settings: settings,

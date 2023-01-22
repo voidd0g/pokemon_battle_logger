@@ -14,7 +14,7 @@ class UserPageNotifier extends StateNotifier<UserPageState> implements IReloadab
         );
 
   @override
-  Future<void> reload() async {
+  Future<void> reload(IReloadableArg? _) async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
         newIsReloading: true,

@@ -1,3 +1,5 @@
 abstract class IReloadablePage {
-  Future<void> reload();
+  Future<void> reload(IReloadableArg? arg);
 }
+
+abstract class IReloadableArg {}

@@ -1,10 +1,10 @@
 class HomeState {
-  final int selectedPageIndex;
-  const HomeState({required this.selectedPageIndex});
+  final List<int> selectedPageIndicesStack;
+  const HomeState({required this.selectedPageIndicesStack});
 
-  HomeState copy({int? newSelectedPageIndex}) {
+  HomeState copy({List<int>? newSelectedPageIndicesStack}) {
     return HomeState(
-      selectedPageIndex: newSelectedPageIndex ?? selectedPageIndex,
+      selectedPageIndicesStack: newSelectedPageIndicesStack ?? selectedPageIndicesStack,
     );
   }
 }

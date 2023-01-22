@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokemon_battle_logger/notifiers/i_reloadable_page.dart';
-import 'package:pokemon_battle_logger/states/home/pages/home.page.state.dart';
+import 'package:pokemon_battle_logger/states/home/pages/new.page.state.dart';
 
-final homePageProvider = StateNotifierProvider<HomePageNotifier, HomePageState>((ref) => HomePageNotifier());
+final newPageProvider = StateNotifierProvider<NewPageNotifier, NewPageState>((ref) => NewPageNotifier());
 
-class HomePageNotifier extends StateNotifier<HomePageState> implements IReloadablePage {
-  static const _defaultState = HomePageState(
+class NewPageNotifier extends StateNotifier<NewPageState> implements IReloadablePage {
+  static const _defaultState = NewPageState(
     isReloading: false,
   );
-  HomePageNotifier()
+  NewPageNotifier()
       : super(
           _defaultState,
         );
