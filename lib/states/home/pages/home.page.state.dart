@@ -1,11 +1,18 @@
 class HomePageState {
-  final bool isReloading;
+  final HomePageStateName stateName;
 
-  const HomePageState({required this.isReloading});
+  const HomePageState({required this.stateName});
 
-  HomePageState copy({bool? newIsReloading}) {
+  HomePageState copy({HomePageStateName? newStateName}) {
     return HomePageState(
-      isReloading: newIsReloading ?? isReloading,
+      stateName: newStateName ?? stateName,
     );
   }
+}
+
+enum HomePageStateName {
+  notInitialized,
+  initializing,
+  normal,
+  reloading,
 }

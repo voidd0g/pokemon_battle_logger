@@ -1,11 +1,20 @@
 class UserPageState {
-  final bool isReloading;
+  final UserPageStateName stateName;
 
-  const UserPageState({required this.isReloading});
+  const UserPageState({required this.stateName});
 
-  UserPageState copy({bool? newIsReloading}) {
+  UserPageState copy({UserPageStateName? newStateName}) {
     return UserPageState(
-      isReloading: newIsReloading ?? isReloading,
+      stateName: newStateName ?? stateName,
     );
   }
+}
+
+enum UserPageStateName {
+  notInitialized,
+  initializing,
+  normal,
+  reloading,
+  signingIn,
+  signingOut,
 }

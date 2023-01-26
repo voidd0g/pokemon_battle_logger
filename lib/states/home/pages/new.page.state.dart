@@ -1,11 +1,18 @@
 class NewPageState {
-  final bool isReloading;
+  final NewPageStateName stateName;
 
-  const NewPageState({required this.isReloading});
+  const NewPageState({required this.stateName});
 
-  NewPageState copy({bool? newIsReloading}) {
+  NewPageState copy({NewPageStateName? newStateName}) {
     return NewPageState(
-      isReloading: newIsReloading ?? isReloading,
+      stateName: newStateName ?? stateName,
     );
   }
+}
+
+enum NewPageStateName {
+  notInitialized,
+  initializing,
+  normal,
+  reloading,
 }

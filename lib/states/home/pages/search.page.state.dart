@@ -1,11 +1,18 @@
 class SearchPageState {
-  final bool isReloading;
+  final SearchPageStateName stateName;
 
-  const SearchPageState({required this.isReloading});
+  const SearchPageState({required this.stateName});
 
-  SearchPageState copy({bool? newIsReloading}) {
+  SearchPageState copy({SearchPageStateName? newStateName}) {
     return SearchPageState(
-      isReloading: newIsReloading ?? isReloading,
+      stateName: newStateName ?? stateName,
     );
   }
+}
+
+enum SearchPageStateName {
+  notInitialized,
+  initializing,
+  normal,
+  reloading,
 }

@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pokemon_battle_logger/notifiers/i_reloadable_page.dart';
+import 'package:pokemon_battle_logger/notifiers/i_notifier.dart';
 import 'package:pokemon_battle_logger/states/home/pages/popular.page.state.dart';
 
 final popularPageProvider = StateNotifierProvider<PopularPageNotifier, PopularPageState>((ref) => PopularPageNotifier());
 
-class PopularPageNotifier extends StateNotifier<PopularPageState> implements IReloadablePage {
+class PopularPageNotifier extends StateNotifier<PopularPageState> implements INotifier {
   static const _defaultState = PopularPageState(
-    isReloading: false,
+    stateName: PopularPageStateName.notInitialized,
   );
   PopularPageNotifier()
       : super(
@@ -14,15 +14,30 @@ class PopularPageNotifier extends StateNotifier<PopularPageState> implements IRe
         );
 
   @override
+  Future<void> initialize() async {
+    await Future.delayed(Duration.zero, () {
+      state = state.copy(
+        newStateName: PopularPageStateName.initializing,
+      );
+    });
+    await Future.delayed(Duration.zero, () {
+      state = state.copy(
+        newStateName: PopularPageStateName.normal,
+      );
+    });
+  }
+
+  @override
   Future<void> reload(IReloadableArg? _) async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
-        newIsReloading: true,
+        newStateName: PopularPageStateName.reloading,
       );
     });
-    await Future.delayed(const Duration(seconds: 2), () {});
     await Future.delayed(Duration.zero, () {
-      state = _defaultState;
+      state = state.copy(
+        newStateName: PopularPageStateName.normal,
+      );
     });
   }
 }

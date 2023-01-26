@@ -1,4 +1,5 @@
-abstract class IReloadablePage {
+abstract class INotifier {
+  Future<void> initialize();
   Future<void> reload(IReloadableArg? arg);
 }
 

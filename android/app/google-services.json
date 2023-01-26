@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "489654701677-5ssqcccik6qfj5uikpv48msr4evls3t4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "voidd0g.com.pokemon_battle_logger",
+            "certificate_hash": "5dc06c686046a33eacb6ab0a96b1c8e14d8f6005"
+          }
+        },
+        {
           "client_id": "489654701677-47c3r2no1mvlrhuphp1pk13qnbk4fir8.apps.googleusercontent.com",
           "client_type": 3
         }

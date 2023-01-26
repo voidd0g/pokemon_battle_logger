@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pokemon_battle_logger/notifiers/home/home.notifier.dart';
 import 'package:pokemon_battle_logger/notifiers/home/pages/home.page.notifier.dart';
 import 'package:pokemon_battle_logger/routing/home_pages.dart';
+import 'package:pokemon_battle_logger/states/home/pages/home.page.state.dart';
 
 class HomePageView extends ConsumerWidget {
   const HomePageView({
@@ -63,6 +64,11 @@ class HomePageView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(homePageProvider);
+    if (state.stateName == HomePageStateName.notInitialized) {
+      Future.delayed(Duration.zero, () async {
+        await ref.read(homePageProvider.notifier).initialize();
+      });
+    }
 
     final buttons = [
       _button(
@@ -95,21 +101,31 @@ class HomePageView extends ConsumerWidget {
       ),
     ];
 
-    return state.isReloading
-        ? SpinKitChasingDots(
-            color: Colors.red.shade300,
-          )
-        : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: (buttonHeight + 20.0) * buttons.length,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: buttons,
-              ),
+    Widget screen;
+    switch (state.stateName) {
+      case HomePageStateName.notInitialized:
+      case HomePageStateName.initializing:
+      case HomePageStateName.reloading:
+        screen = SpinKitChasingDots(
+          color: Colors.red.shade300,
+        );
+        break;
+      case HomePageStateName.normal:
+        screen = Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            height: (buttonHeight + 20.0) * buttons.length,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: buttons,
             ),
-          );
+          ),
+        );
+        break;
+    }
+
+    return screen;
   }
 }

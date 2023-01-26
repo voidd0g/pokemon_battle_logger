@@ -1,11 +1,18 @@
 class PopularPageState {
-  final bool isReloading;
+  final PopularPageStateName stateName;
 
-  const PopularPageState({required this.isReloading});
+  const PopularPageState({required this.stateName});
 
-  PopularPageState copy({bool? newIsReloading}) {
+  PopularPageState copy({PopularPageStateName? newStateName}) {
     return PopularPageState(
-      isReloading: newIsReloading ?? isReloading,
+      stateName: newStateName ?? stateName,
     );
   }
+}
+
+enum PopularPageStateName {
+  notInitialized,
+  initializing,
+  normal,
+  reloading,
 }

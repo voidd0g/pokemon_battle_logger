@@ -1,12 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pokemon_battle_logger/notifiers/i_reloadable_page.dart';
+import 'package:pokemon_battle_logger/notifiers/i_notifier.dart';
 import 'package:pokemon_battle_logger/routing/home_pages.dart';
 import 'package:pokemon_battle_logger/states/home/home.state.dart';
+import 'package:pokemon_battle_logger/utils/firebase_util.dart';
 
 final homeProvider = StateNotifierProvider<HomeNotifier, HomeState>((ref) => HomeNotifier());
 
-class HomeNotifier extends StateNotifier<HomeState> implements IReloadablePage {
+class HomeNotifier extends StateNotifier<HomeState> implements INotifier {
   static const HomeState _defaultState = HomeState(
+    stateName: HomeStateName.notInitialized,
     selectedPageIndicesStack: [HomePages.homePageIndex],
   );
 
@@ -48,9 +50,31 @@ class HomeNotifier extends StateNotifier<HomeState> implements IReloadablePage {
   }
 
   @override
+  Future<void> initialize() async {
+    await Future.delayed(Duration.zero, () {
+      state = state.copy(
+        newStateName: HomeStateName.initializing,
+      );
+    });
+    await FirebaseUtil.instance.initialize();
+    await Future.delayed(Duration.zero, () {
+      state = state.copy(
+        newStateName: HomeStateName.normal,
+      );
+    });
+  }
+
+  @override
   Future<void> reload(IReloadableArg? _) async {
     await Future.delayed(Duration.zero, () {
-      state = _defaultState;
+      state = state.copy(
+        newStateName: HomeStateName.reloading,
+      );
+    });
+    await Future.delayed(Duration.zero, () {
+      state = state.copy(
+        newStateName: HomeStateName.normal,
+      );
     });
   }
 }

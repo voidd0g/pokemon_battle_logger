@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pokemon_battle_logger/notifiers/home/pages/search.page.notifier.dart';
+import 'package:pokemon_battle_logger/states/home/pages/search.page.state.dart';
 
 class SearchPageView extends ConsumerWidget {
   const SearchPageView({
@@ -11,10 +12,26 @@ class SearchPageView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(searchPageProvider);
-    return state.isReloading
-        ? SpinKitChasingDots(
-            color: Colors.red.shade300,
-          )
-        : const Text('SearchPage');
+    if (state.stateName == SearchPageStateName.notInitialized) {
+      Future.delayed(Duration.zero, () async {
+        await ref.read(searchPageProvider.notifier).initialize();
+      });
+    }
+
+    Widget screen;
+    switch (state.stateName) {
+      case SearchPageStateName.notInitialized:
+      case SearchPageStateName.initializing:
+      case SearchPageStateName.reloading:
+        screen = SpinKitChasingDots(
+          color: Colors.red.shade300,
+        );
+        break;
+      case SearchPageStateName.normal:
+        screen = const Text('SearchPage');
+        break;
+    }
+
+    return screen;
   }
 }

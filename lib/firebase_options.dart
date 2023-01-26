@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -48,16 +51,6 @@ class DefaultFirebaseOptions {
         );
     }
   }
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBE5zzz-0npGsXxznzeh19bZisljGc17Sw',
-    appId: '1:489654701677:web:4c223270ed84228cb93964',
-    messagingSenderId: '489654701677',
-    projectId: 'pokemon-battle-logger',
-    authDomain: 'pokemon-battle-logger.firebaseapp.com',
-    storageBucket: 'pokemon-battle-logger.appspot.com',
-    measurementId: 'G-51FMZD25EN',
-  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyC29zJI2l6ZWjmZMegI8VqByNef4txF5Z4',
