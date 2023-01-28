@@ -14,24 +14,19 @@ class NewPageNotifier extends StateNotifier<NewPageState> implements INotifier {
         );
 
   @override
-  Future<void> initialize() async {
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: NewPageStateName.initializing,
-      );
-    });
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: NewPageStateName.normal,
-      );
-    });
+  Future<void> reset() async {
+    if (state.stateName == NewPageStateName.normal) {
+      await Future.delayed(Duration.zero, () {
+        state = _defaultState;
+      });
+    }
   }
 
   @override
-  Future<void> reload(IReloadableArg? _) async {
+  Future<void> initialize({INotifierArg? arg}) async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
-        newStateName: NewPageStateName.reloading,
+        newStateName: NewPageStateName.initializing,
       );
     });
     await Future.delayed(Duration.zero, () {

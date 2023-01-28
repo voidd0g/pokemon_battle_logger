@@ -15,5 +15,4 @@ enum HomeStateName {
   notInitialized,
   initializing,
   normal,
-  reloading,
 }

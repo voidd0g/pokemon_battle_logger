@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:pokemon_battle_logger/constants/theme_colors.dart';
 import 'package:pokemon_battle_logger/notifiers/home/pages/new.page.notifier.dart';
 import 'package:pokemon_battle_logger/states/home/pages/new.page.state.dart';
 
@@ -22,9 +23,8 @@ class NewPageView extends ConsumerWidget {
     switch (state.stateName) {
       case NewPageStateName.notInitialized:
       case NewPageStateName.initializing:
-      case NewPageStateName.reloading:
         screen = SpinKitChasingDots(
-          color: Colors.red.shade300,
+          color: ThemeColors.spinnerColor,
         );
         break;
       case NewPageStateName.normal:

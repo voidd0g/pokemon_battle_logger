@@ -99,3 +99,20 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: MPLUSRounded1c
+      fonts:
+        - asset: fonts/MPLUSRounded1c/MPLUSRounded1c-Black.ttf
+          weight: 900
+        - asset: fonts/MPLUSRounded1c/MPLUSRounded1c-ExtraBold.ttf
+          weight: 800
+        - asset: fonts/MPLUSRounded1c/MPLUSRounded1c-Bold.ttf
+          weight: 700
+        - asset: fonts/MPLUSRounded1c/MPLUSRounded1c-Medium.ttf
+          weight: 500
+        - asset: fonts/MPLUSRounded1c/MPLUSRounded1c-Regular.ttf
+          weight: 400
+        - asset: fonts/MPLUSRounded1c/MPLUSRounded1c-Light.ttf
+          weight: 300
+        - asset: fonts/MPLUSRounded1c/MPLUSRounded1c-Thin.ttf
+          weight: 100

@@ -6,7 +6,7 @@ service cloud.firestore {
       allow list: if false;
       allow create: if request.auth != null && uid == request.auth.uid && request.resource.data.uid != null && uid == request.resource.data.uid;
       allow update: if request.auth != null && uid == request.auth.uid && request.resource.data.uid != null && uid == request.resource.data.uid;
-      allow delete: if request.auth != null && uid == request.auth.uid && request.resource.data.uid != null && uid == resource.data.uid;
+      allow delete: if request.auth != null && uid == request.auth.uid && resource.data.uid != null && uid == resource.data.uid;
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:pokemon_battle_logger/constants/theme_colors.dart';
 import 'package:pokemon_battle_logger/notifiers/home/pages/popular.page.notifier.dart';
 import 'package:pokemon_battle_logger/states/home/pages/popular.page.state.dart';
 
@@ -22,9 +23,8 @@ class PopularPageView extends ConsumerWidget {
     switch (state.stateName) {
       case PopularPageStateName.notInitialized:
       case PopularPageStateName.initializing:
-      case PopularPageStateName.reloading:
         screen = SpinKitChasingDots(
-          color: Colors.red.shade300,
+          color: ThemeColors.spinnerColor,
         );
         break;
       case PopularPageStateName.normal:

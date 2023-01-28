@@ -3,6 +3,10 @@ class User {
   final String displayName;
   final String? iconPath;
 
+  static const String uidField = 'uid';
+  static const String displayNameField = 'display_name';
+  static const String iconPathField = 'icon_path';
+
   const User({required this.uid, required this.displayName, required this.iconPath});
 
   User copy({String? newUid, String? newDisplayName, String? newIconPath}) {
@@ -14,15 +18,15 @@ class User {
   }
 
   User.fromMap(Map<String, dynamic> data)
-      : uid = data['uid'],
-        displayName = data['display_name'],
-        iconPath = data['icon_path'];
+      : uid = data[uidField],
+        displayName = data[displayNameField],
+        iconPath = data[iconPathField];
 
   Map<String, dynamic> toMap() {
     return {
-      'uid': uid,
-      'display_name': displayName,
-      'icon_path': iconPath,
+      uidField: uid,
+      displayNameField: displayName,
+      iconPathField: iconPath,
     };
   }
 }

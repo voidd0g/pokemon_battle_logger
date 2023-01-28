@@ -14,5 +14,4 @@ enum HomePageStateName {
   notInitialized,
   initializing,
   normal,
-  reloading,
 }

@@ -14,24 +14,19 @@ class SearchPageNotifier extends StateNotifier<SearchPageState> implements INoti
         );
 
   @override
-  Future<void> initialize() async {
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: SearchPageStateName.initializing,
-      );
-    });
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: SearchPageStateName.normal,
-      );
-    });
+  Future<void> reset() async {
+    if (state.stateName == SearchPageStateName.normal) {
+      await Future.delayed(Duration.zero, () {
+        state = _defaultState;
+      });
+    }
   }
 
   @override
-  Future<void> reload(IReloadableArg? _) async {
+  Future<void> initialize({INotifierArg? arg}) async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
-        newStateName: SearchPageStateName.reloading,
+        newStateName: SearchPageStateName.initializing,
       );
     });
     await Future.delayed(Duration.zero, () {

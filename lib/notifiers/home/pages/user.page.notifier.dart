@@ -15,26 +15,22 @@ class UserPageNotifier extends StateNotifier<UserPageState> implements INotifier
         );
 
   @override
-  Future<void> initialize() async {
+  Future<void> reset() async {
+    if (state.stateName == UserPageStateName.normal) {
+      await Future.delayed(Duration.zero, () {
+        state = _defaultState;
+      });
+    }
+  }
+
+  @override
+  Future<void> initialize({INotifierArg? arg}) async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
         newStateName: UserPageStateName.initializing,
       );
     });
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: UserPageStateName.normal,
-      );
-    });
-  }
-
-  @override
-  Future<void> reload(IReloadableArg? _) async {
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: UserPageStateName.reloading,
-      );
-    });
+    await UserServices.instance.checkCacheSignedIn();
     await Future.delayed(Duration.zero, () {
       state = state.copy(
         newStateName: UserPageStateName.normal,

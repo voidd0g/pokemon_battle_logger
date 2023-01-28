@@ -14,7 +14,6 @@ enum UserPageStateName {
   notInitialized,
   initializing,
   normal,
-  reloading,
   signingIn,
   signingOut,
 }

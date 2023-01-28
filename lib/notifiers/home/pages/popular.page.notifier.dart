@@ -14,24 +14,19 @@ class PopularPageNotifier extends StateNotifier<PopularPageState> implements INo
         );
 
   @override
-  Future<void> initialize() async {
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: PopularPageStateName.initializing,
-      );
-    });
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: PopularPageStateName.normal,
-      );
-    });
+  Future<void> reset() async {
+    if (state.stateName == PopularPageStateName.normal) {
+      await Future.delayed(Duration.zero, () {
+        state = _defaultState;
+      });
+    }
   }
 
   @override
-  Future<void> reload(IReloadableArg? _) async {
+  Future<void> initialize({INotifierArg? arg}) async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
-        newStateName: PopularPageStateName.reloading,
+        newStateName: PopularPageStateName.initializing,
       );
     });
     await Future.delayed(Duration.zero, () {

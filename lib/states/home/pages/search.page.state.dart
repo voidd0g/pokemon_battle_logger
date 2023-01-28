@@ -14,5 +14,4 @@ enum SearchPageStateName {
   notInitialized,
   initializing,
   normal,
-  reloading,
 }

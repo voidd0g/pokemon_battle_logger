@@ -14,5 +14,4 @@ enum NewPageStateName {
   notInitialized,
   initializing,
   normal,
-  reloading,
 }

@@ -14,5 +14,4 @@ enum PopularPageStateName {
   notInitialized,
   initializing,
   normal,
-  reloading,
 }

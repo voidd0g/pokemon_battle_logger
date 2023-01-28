@@ -14,24 +14,19 @@ class HomePageNotifier extends StateNotifier<HomePageState> implements INotifier
         );
 
   @override
-  Future<void> initialize() async {
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: HomePageStateName.initializing,
-      );
-    });
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: HomePageStateName.normal,
-      );
-    });
+  Future<void> reset() async {
+    if (state.stateName == HomePageStateName.normal) {
+      await Future.delayed(Duration.zero, () {
+        state = _defaultState;
+      });
+    }
   }
 
   @override
-  Future<void> reload(IReloadableArg? _) async {
+  Future<void> initialize({INotifierArg? arg}) async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
-        newStateName: HomePageStateName.reloading,
+        newStateName: HomePageStateName.initializing,
       );
     });
     await Future.delayed(Duration.zero, () {

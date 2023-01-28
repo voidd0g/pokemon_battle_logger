@@ -50,27 +50,22 @@ class HomeNotifier extends StateNotifier<HomeState> implements INotifier {
   }
 
   @override
-  Future<void> initialize() async {
+  Future<void> reset() async {
+    if (state.stateName == HomeStateName.normal) {
+      await Future.delayed(Duration.zero, () {
+        state = _defaultState;
+      });
+    }
+  }
+
+  @override
+  Future<void> initialize({INotifierArg? arg}) async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
         newStateName: HomeStateName.initializing,
       );
     });
     await FirebaseUtil.instance.initialize();
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: HomeStateName.normal,
-      );
-    });
-  }
-
-  @override
-  Future<void> reload(IReloadableArg? _) async {
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: HomeStateName.reloading,
-      );
-    });
     await Future.delayed(Duration.zero, () {
       state = state.copy(
         newStateName: HomeStateName.normal,

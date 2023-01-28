@@ -1,6 +1,6 @@
 abstract class INotifier {
-  Future<void> initialize();
-  Future<void> reload(IReloadableArg? arg);
+  Future<void> initialize({INotifierArg? arg});
+  Future<void> reset();
 }
 
-abstract class IReloadableArg {}
+abstract class INotifierArg {}
