@@ -126,17 +126,27 @@ class UserNotifier extends StateNotifier<UserState> implements INotifier {
     });
   }
 
-  Future<void> deleteAccount() async {
+  Future<bool> deleteAccount() async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
         newStateName: UserStateName.changing,
       );
     });
-    await UserServices.instance.deleteUser();
-    await Future.delayed(Duration.zero, () {
-      state = state.copy(
-        newStateName: UserStateName.redirecting,
-      );
-    });
+    bool res = await UserServices.instance.deleteUser();
+    if (res) {
+      await Future.delayed(Duration.zero, () {
+        state = state.copy(
+          newStateName: UserStateName.redirecting,
+        );
+      });
+      return true;
+    } else {
+      await Future.delayed(Duration.zero, () {
+        state = state.copy(
+          newStateName: UserStateName.normal,
+        );
+      });
+      return false;
+    }
   }
 }

@@ -133,6 +133,18 @@ class UserView extends ConsumerWidget {
                                 buttonHeight: 40.0,
                                 radius: 20.0,
                                 highlighted: true,
+                                icon: Icons.delete,
+                                text: 'アイコンを削除',
+                              ),
+                              Button(
+                                onPressed: () async {
+                                  await Future.delayed(Duration.zero, () async {
+                                    Navigator.of(context).pop(3);
+                                  });
+                                },
+                                buttonHeight: 40.0,
+                                radius: 20.0,
+                                highlighted: true,
                                 icon: Icons.arrow_back_ios_new,
                                 text: 'やめる',
                               )
@@ -148,6 +160,9 @@ class UserView extends ConsumerWidget {
                           await ref.read(userProvider.notifier).resetIcon();
                           break;
                         case 2:
+                          await ref.read(userProvider.notifier).deleteIcon();
+                          return;
+                        case 3:
                           return;
                       }
                     },
@@ -310,9 +325,47 @@ class UserView extends ConsumerWidget {
                           ),
                         );
                       });
-                      if (res) {
-                        await ref.read(userProvider.notifier).deleteAccount();
+                      if (!res) {
+                        return;
                       }
+                      res = await ref.read(userProvider.notifier).deleteAccount();
+                      if (res) {
+                        return;
+                      }
+                      await Future.delayed(Duration.zero, () async {
+                        await showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            title: const PlainText(
+                              text: '削除エラー',
+                              weight: FontWeight.bold,
+                              size: 16.0,
+                            ),
+                            content: const PlainText(
+                              text: 'アカウント削除に失敗',
+                              weight: FontWeight.normal,
+                              size: 16.0,
+                            ),
+                            actions: [
+                              Button(
+                                onPressed: () async {
+                                  await Future.delayed(Duration.zero, () async {
+                                    Navigator.of(context).pop();
+                                  });
+                                },
+                                buttonHeight: 40.0,
+                                radius: 20.0,
+                                highlighted: true,
+                                icon: Icons.check,
+                                text: 'OK',
+                              )
+                            ],
+                          ),
+                        );
+                      });
                     },
                     buttonHeight: 50.0,
                     radius: 25.0,

@@ -195,16 +195,28 @@ class UserPageView extends ConsumerWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          title: const Text('サインインエラー'),
-                          content: const Text('Googleアカウントサインインに失敗'),
+                          title: const PlainText(
+                            text: 'サインインエラー',
+                            weight: FontWeight.bold,
+                            size: 16.0,
+                          ),
+                          content: const PlainText(
+                            text: 'Googleアカウントサインインに失敗',
+                            weight: FontWeight.normal,
+                            size: 16.0,
+                          ),
                           actions: [
-                            TextButton(
+                            Button(
                               onPressed: () async {
                                 await Future.delayed(Duration.zero, () async {
                                   Navigator.of(context).pop();
                                 });
                               },
-                              child: const Text('OK'),
+                              buttonHeight: 40.0,
+                              radius: 20.0,
+                              highlighted: true,
+                              icon: Icons.check,
+                              text: 'OK',
                             )
                           ],
                         ),

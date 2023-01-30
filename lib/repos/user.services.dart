@@ -1,9 +1,8 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pokemon_battle_logger/models/user.dart';
@@ -20,221 +19,252 @@ class UserServices {
   User? currentUser;
 
   Future<void> checkCacheSignedIn() async {
-    try {
-      final FirebaseAuth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
-      final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
-      if (auth.currentUser != null) {
-        final userDoc = await store.collection('users').doc(auth.currentUser!.uid).get();
-        if (!userDoc.exists) {
-          final displayName = TextFieldUtil.limitLength(source: auth.currentUser!.displayName?.substring(0, 30) ?? auth.currentUser!.uid.substring(0, 30), maxLength: 30);
-          currentUser = User(
-            uid: auth.currentUser!.uid,
-            displayName: displayName!,
-            iconPath: auth.currentUser?.photoURL,
-          );
-          await store.collection('users').doc(auth.currentUser!.uid).set(currentUser!.toMap());
-        } else {
-          currentUser = User.fromMap(userDoc.data()!);
-        }
-        return;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+    final firebase_auth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
+    final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
+    if (auth.currentUser == null) {
       return;
     }
+    final userDoc = await store.collection('users').doc(auth.currentUser!.uid).get();
+    if (userDoc.exists) {
+      currentUser = User.fromMap(userDoc.data()!);
+      return;
+    }
+    final displayName = TextFieldUtil.limitLength(source: auth.currentUser!.displayName ?? auth.currentUser!.uid, maxLength: 30);
+    currentUser = User(
+      uid: auth.currentUser!.uid,
+      displayName: displayName!,
+      iconPath: auth.currentUser?.photoURL,
+    );
+    await store.collection('users').doc(auth.currentUser!.uid).set(currentUser!.toMap());
   }
 
   Future<User?> signInWithGoogle() async {
-    try {
-      final FirebaseAuth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
-      final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
+    if (currentUser != null) {
+      return currentUser!;
+    }
 
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
-      if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+    final firebase_auth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
+    final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
 
-        final FirebaseAuth.AuthCredential credential = FirebaseAuth.GoogleAuthProvider.credential(
-          accessToken: googleSignInAuthentication.accessToken,
-          idToken: googleSignInAuthentication.idToken,
-        );
-
-        await auth.signInWithCredential(credential);
-        if (auth.currentUser != null) {
-          final userDoc = await store.collection('users').doc(auth.currentUser!.uid).get();
-          if (!userDoc.exists) {
-            final displayName = TextFieldUtil.limitLength(source: auth.currentUser!.displayName?.substring(0, 30) ?? auth.currentUser!.uid.substring(0, 30), maxLength: 30);
-            currentUser = User(
-              uid: auth.currentUser!.uid,
-              displayName: displayName!,
-              iconPath: auth.currentUser?.photoURL,
-            );
-            await store.collection('users').doc(auth.currentUser!.uid).set(currentUser!.toMap());
-          } else {
-            currentUser = User.fromMap(userDoc.data()!);
-          }
-          return currentUser!;
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+    if (googleSignInAccount == null) {
       return null;
     }
+    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+
+    final firebase_auth.AuthCredential credential = firebase_auth.GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+
+    try {
+      await auth.signInWithCredential(credential);
+    } on firebase_auth.FirebaseAuthException {
+      return null;
+    }
+
+    if (auth.currentUser == null) {
+      return null;
+    }
+
+    final DocumentSnapshot<Map<String, dynamic>> userDoc;
+    try {
+      userDoc = await store.collection('users').doc(auth.currentUser!.uid).get();
+    } on FirebaseException {
+      return null;
+    }
+
+    if (userDoc.exists) {
+      currentUser = User.fromMap(userDoc.data()!);
+      return currentUser!;
+    }
+
+    final displayName = TextFieldUtil.limitLength(source: auth.currentUser!.displayName ?? auth.currentUser!.uid, maxLength: 30);
+    final User userToWrite = User(
+      uid: auth.currentUser!.uid,
+      displayName: displayName!,
+      iconPath: auth.currentUser?.photoURL,
+    );
+
+    try {
+      await store.collection('users').doc(auth.currentUser!.uid).set(userToWrite.toMap());
+    } on FirebaseException {
+      return null;
+    }
+
+    currentUser = userToWrite;
+    return currentUser!;
   }
 
   Future<void> signOutFromGoogle() async {
-    await GoogleSignIn().signOut();
-    final FirebaseAuth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    final firebase_auth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
+    await googleSignIn.signOut();
     await auth.signOut();
     currentUser = null;
   }
 
   Future<String?> pickImage(ImageSource source) async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      return image?.path;
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-      return null;
-    }
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    return image?.path;
   }
 
   Future<bool> updateIcon(String imagePath) async {
-    try {
-      final FirebaseAuth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
-      final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
-      final FirebaseStorage storage = FirebaseUtil.instance.storageInstance;
+    final firebase_auth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
+    final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
+    final FirebaseStorage storage = FirebaseUtil.instance.storageInstance;
 
-      File file = File(imagePath);
+    File file = File(imagePath);
 
-      if (file.existsSync() && auth.currentUser != null && currentUser != null) {
-        await storage.ref('users/${currentUser!.uid}/icon').putFile(file);
-        final String imageUrl = await storage.ref('users/${currentUser!.uid}/icon').getDownloadURL();
-        await store.collection('users').doc(auth.currentUser!.uid).update({User.iconPathField: imageUrl});
-        currentUser = currentUser!.copy(newIconPath: imageUrl);
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+    if (!file.existsSync() || auth.currentUser == null || currentUser == null) {
       return false;
     }
+
+    try {
+      await storage.ref('users/${currentUser!.uid}/icon').putFile(file);
+    } on FirebaseException {
+      return false;
+    }
+
+    final String imageUrl;
+    try {
+      imageUrl = await storage.ref('users/${currentUser!.uid}/icon').getDownloadURL();
+    } on FirebaseException {
+      return false;
+    }
+
+    try {
+      await store.collection('users').doc(auth.currentUser!.uid).update({User.iconPathField: imageUrl});
+    } on FirebaseException {
+      return false;
+    }
+    currentUser = currentUser!.copy(newIconPath: imageUrl);
+    return true;
   }
 
   Future<void> deleteIcon() async {
-    try {
-      final FirebaseAuth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
-      final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
-      final FirebaseStorage storage = FirebaseUtil.instance.storageInstance;
+    final firebase_auth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
+    final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
+    final FirebaseStorage storage = FirebaseUtil.instance.storageInstance;
 
-      if (auth.currentUser != null && currentUser != null) {
-        await storage.ref('users/${currentUser!.uid}/icon').delete();
-        await store.collection('users').doc(auth.currentUser!.uid).update({User.iconPathField: null});
-        currentUser = User(
-          uid: currentUser!.uid,
-          displayName: currentUser!.displayName,
-          iconPath: null,
-        );
-        return;
-      } else {
-        return;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+    if (auth.currentUser == null || currentUser == null) {
+      return;
+    }
+    try {
+      await store.collection('users').doc(auth.currentUser!.uid).update({User.iconPathField: null});
+    } on FirebaseException {
+      return;
+    }
+    currentUser = User(
+      uid: currentUser!.uid,
+      displayName: currentUser!.displayName,
+      iconPath: null,
+    );
+    try {
+      await storage.ref('users/${currentUser!.uid}/icon').delete();
+    } on FirebaseException {
       return;
     }
   }
 
   Future<void> resetIcon() async {
     await deleteIcon();
-    try {
-      final FirebaseAuth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
-      final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
+    final firebase_auth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
+    final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
 
-      if (auth.currentUser != null && currentUser != null) {
-        if (auth.currentUser!.photoURL != null) {
-          await store.collection('users').doc(auth.currentUser!.uid).update({User.iconPathField: auth.currentUser!.photoURL});
-          currentUser = currentUser!.copy(newIconPath: auth.currentUser!.photoURL);
-        }
-        return;
-      } else {
-        return;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+    if (auth.currentUser == null || currentUser == null) {
       return;
     }
+
+    if (auth.currentUser!.photoURL == null) {
+      return;
+    }
+
+    try {
+      await store.collection('users').doc(auth.currentUser!.uid).update({User.iconPathField: auth.currentUser!.photoURL});
+    } on FirebaseException {
+      return;
+    }
+    currentUser = currentUser!.copy(newIconPath: auth.currentUser!.photoURL);
   }
 
   Future<bool> updateDisplayName(String newName) async {
-    try {
-      final FirebaseAuth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
-      final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
+    final firebase_auth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
+    final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
 
-      if (auth.currentUser != null && currentUser != null) {
-        final displayName = TextFieldUtil.limitLength(source: newName, maxLength: 30);
-        await store.collection('users').doc(auth.currentUser!.uid).update({User.displayNameField: displayName});
-        currentUser = currentUser!.copy(newDisplayName: displayName);
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+    if (auth.currentUser == null || currentUser == null) {
       return false;
     }
+    final displayName = TextFieldUtil.limitLength(source: newName, maxLength: 30);
+    try {
+      await store.collection('users').doc(auth.currentUser!.uid).update({User.displayNameField: displayName});
+    } on FirebaseException {
+      return false;
+    }
+    currentUser = currentUser!.copy(newDisplayName: displayName);
+    return true;
   }
 
   Future<void> resetDisplayName() async {
-    try {
-      final FirebaseAuth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
-      final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
+    final firebase_auth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
+    final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
 
-      if (auth.currentUser != null && currentUser != null) {
-        if (auth.currentUser!.displayName != null) {
-          final displayName = TextFieldUtil.limitLength(source: auth.currentUser!.displayName!, maxLength: 30);
-          await store.collection('users').doc(auth.currentUser!.uid).update({User.displayNameField: displayName});
-          currentUser = currentUser!.copy(newDisplayName: displayName);
-        }
-        return;
-      } else {
-        return;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+    if (auth.currentUser == null || currentUser == null) {
       return;
     }
+    if (auth.currentUser!.displayName == null) {
+      return;
+    }
+    final displayName = TextFieldUtil.limitLength(source: auth.currentUser!.displayName!, maxLength: 30);
+    try {
+      await store.collection('users').doc(auth.currentUser!.uid).update({User.displayNameField: displayName});
+    } on FirebaseException {
+      return;
+    }
+    currentUser = currentUser!.copy(newDisplayName: displayName);
   }
 
-  Future<void> deleteUser() async {
-    await GoogleSignIn().signOut();
-    final FirebaseAuth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
+  Future<bool> deleteUser() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+    await googleSignIn.signOut();
+    final firebase_auth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
     final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
+
+    if (auth.currentUser == null) {
+      return false;
+    }
+
+    final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+    if (googleSignInAccount == null) {
+      return false;
+    }
+    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+
+    final firebase_auth.AuthCredential credential = firebase_auth.GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+
+    try {
+      await auth.currentUser!.reauthenticateWithCredential(credential);
+    } on firebase_auth.FirebaseAuthException {
+      return false;
+    }
+
     await deleteIcon();
-    await store.collection('users').doc(auth.currentUser!.uid).delete();
+    try {
+      await store.collection('users').doc(auth.currentUser!.uid).delete();
+    } on FirebaseException {
+      return false;
+    }
+
     await auth.currentUser!.delete();
     currentUser = null;
+
+    await googleSignIn.signOut();
+
+    return true;
   }
 }

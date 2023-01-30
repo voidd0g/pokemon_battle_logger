@@ -15,8 +15,7 @@ class AppRouting {
         return MaterialPageRoute(
           builder: (context) => const UserView(),
         );
-      default:
-        throw Exception('[AppRouting] Route not found');
     }
+    return null;
   }
 }
