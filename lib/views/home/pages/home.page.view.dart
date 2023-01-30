@@ -85,18 +85,15 @@ class HomePageView extends ConsumerWidget {
         );
         break;
       case HomePageStateName.normal:
-        screen = Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            height: (buttonHeight + 20.0) * buttons.length,
-            child: ListView(
-              children: [
-                Column(
-                  children: buttons,
-                ),
-              ],
+        screen = ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: buttons,
+              ),
             ),
-          ),
+          ],
         );
         break;
     }

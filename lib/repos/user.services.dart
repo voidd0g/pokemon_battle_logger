@@ -162,12 +162,12 @@ class UserServices {
   }
 
   Future<void> resetIcon() async {
+    await deleteIcon();
     try {
       final FirebaseAuth.FirebaseAuth auth = FirebaseUtil.instance.authInstance;
       final FirebaseFirestore store = FirebaseUtil.instance.firestoreInstance;
 
       if (auth.currentUser != null && currentUser != null) {
-        await deleteIcon();
         if (auth.currentUser!.photoURL != null) {
           await store.collection('users').doc(auth.currentUser!.uid).update({User.iconPathField: auth.currentUser!.photoURL});
           currentUser = currentUser!.copy(newIconPath: auth.currentUser!.photoURL);

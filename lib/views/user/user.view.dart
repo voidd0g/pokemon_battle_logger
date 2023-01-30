@@ -209,7 +209,7 @@ class UserView extends ConsumerWidget {
                                 buttonHeight: 40.0,
                                 radius: 20.0,
                                 icon: Icons.refresh,
-                                text: 'Googleアカウント名を利用',
+                                text: 'Googleアカウントの名前',
                               ),
                               Button(
                                 onPressed: () async {

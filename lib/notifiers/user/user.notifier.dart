@@ -66,6 +66,20 @@ class UserNotifier extends StateNotifier<UserState> implements INotifier {
     return res;
   }
 
+  Future<void> deleteIcon() async {
+    await Future.delayed(Duration.zero, () {
+      state = state.copy(
+        newStateName: UserStateName.changing,
+      );
+    });
+    await UserServices.instance.deleteIcon();
+    await Future.delayed(Duration.zero, () {
+      state = state.copy(
+        newStateName: UserStateName.normal,
+      );
+    });
+  }
+
   Future<void> resetIcon() async {
     await Future.delayed(Duration.zero, () {
       state = state.copy(
