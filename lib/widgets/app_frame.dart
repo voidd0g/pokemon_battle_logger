@@ -9,6 +9,7 @@ class AppFrame extends StatelessWidget {
     required this.onWillPop,
     this.leading,
     this.bottomNavigationBar,
+    this.title,
     required this.child,
   }) : super(key: key);
 
@@ -16,6 +17,7 @@ class AppFrame extends StatelessWidget {
   final Widget? leading;
   final Widget? bottomNavigationBar;
   final Widget child;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class AppFrame extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             title: AppbarText(
-              text: 'ポケモンバトルログ',
+              text: title ?? 'ポケモンバトルログ',
               color: ThemeColors.appbarForegroundColor,
             ),
             centerTitle: true,

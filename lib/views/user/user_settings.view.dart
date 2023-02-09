@@ -4,18 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pokemon_battle_logger/constants/theme_colors.dart';
-import 'package:pokemon_battle_logger/notifiers/user/user.notifier.dart';
+import 'package:pokemon_battle_logger/notifiers/user/user_settings.notifier.dart';
 import 'package:pokemon_battle_logger/repos/user.services.dart';
 import 'package:pokemon_battle_logger/routing/app_routing.dart';
-import 'package:pokemon_battle_logger/states/user/user.state.dart';
+import 'package:pokemon_battle_logger/states/user/user_settings.state.dart';
+import 'package:pokemon_battle_logger/utils/pop_util.dart';
 import 'package:pokemon_battle_logger/widgets/app_frame.dart';
 import 'package:pokemon_battle_logger/widgets/button.dart';
 import 'package:pokemon_battle_logger/widgets/leading_button.dart';
 import 'package:pokemon_battle_logger/widgets/plain_text.dart';
 import 'package:pokemon_battle_logger/widgets/text_input.dart';
 
-class UserView extends ConsumerWidget {
-  const UserView({
+class UserSettingsView extends ConsumerWidget {
+  const UserSettingsView({
     Key? key,
   }) : super(
           key: key,
@@ -23,45 +24,39 @@ class UserView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(userProvider);
-    if (state.stateName == UserStateName.notInitialized) {
+    final state = ref.watch(userSettingsProvider);
+    if (state.stateName == UserSettingsStateName.notInitialized) {
       Future.delayed(Duration.zero, () async {
-        await ref.read(userProvider.notifier).initialize();
+        await ref.read(userSettingsProvider.notifier).initialize();
       });
     }
-    if (state.stateName == UserStateName.redirecting) {
-      if (Navigator.of(context).canPop()) {
-        Future.delayed(Duration.zero, () async {
-          Navigator.of(context).pop();
-        });
-      } else {
-        Future.delayed(Duration.zero, () async {
-          Navigator.of(context).pushReplacementNamed(AppRouting.home);
-        });
-      }
+    if (state.stateName == UserSettingsStateName.redirecting) {
+      Future.delayed(Duration.zero, () async {
+        await PopUtil.popOrPushNamed(context: context, name: AppRouting.home);
+      });
     }
 
     Widget screen;
     switch (state.stateName) {
-      case UserStateName.notInitialized:
-      case UserStateName.initializing:
-      case UserStateName.redirecting:
-      case UserStateName.changing:
+      case UserSettingsStateName.notInitialized:
+      case UserSettingsStateName.initializing:
+      case UserSettingsStateName.redirecting:
+      case UserSettingsStateName.changing:
         screen = AppFrame(
           onWillPop: () async => false,
+          title: 'ユーザー設定',
           child: SpinKitChasingDots(
             color: ThemeColors.spinnerColor,
           ),
         );
         break;
-      case UserStateName.normal:
+      case UserSettingsStateName.normal:
         screen = AppFrame(
           onWillPop: () async => true,
+          title: 'ユーザー設定',
           leading: LeadingButton(
             onPressed: () async {
-              await Future.delayed(Duration.zero, () async {
-                Navigator.of(context).pop();
-              });
+              await PopUtil.popOrPushNamed(context: context, name: AppRouting.home);
             },
             icon: Icons.arrow_back,
           ),
@@ -154,16 +149,16 @@ class UserView extends ConsumerWidget {
                       });
                       switch (res) {
                         case 0:
-                          await ref.read(userProvider.notifier).pickImageAndUpdateIcon(ImageSource.gallery);
+                          await ref.read(userSettingsProvider.notifier).pickImageAndUpdateIcon(ImageSource.gallery);
                           break;
                         case 1:
-                          await ref.read(userProvider.notifier).resetIcon();
+                          await ref.read(userSettingsProvider.notifier).resetIcon();
                           break;
                         case 2:
-                          await ref.read(userProvider.notifier).deleteIcon();
-                          return;
+                          await ref.read(userSettingsProvider.notifier).deleteIcon();
+                          break;
                         case 3:
-                          return;
+                          break;
                       }
                     },
                     buttonHeight: 50.0,
@@ -245,14 +240,14 @@ class UserView extends ConsumerWidget {
                       switch (res) {
                         case 0:
                           if (controller.text != UserServices.instance.currentUser!.displayName && controller.text != '') {
-                            await ref.read(userProvider.notifier).updateDisplayName(controller.text);
+                            await ref.read(userSettingsProvider.notifier).updateDisplayName(controller.text);
                           }
                           break;
                         case 1:
-                          await ref.read(userProvider.notifier).resetDisplayName();
+                          await ref.read(userSettingsProvider.notifier).resetDisplayName();
                           break;
                         case 2:
-                          return;
+                          break;
                       }
                     },
                     buttonHeight: 50.0,
@@ -328,7 +323,7 @@ class UserView extends ConsumerWidget {
                       if (!res) {
                         return;
                       }
-                      res = await ref.read(userProvider.notifier).deleteAccount();
+                      res = await ref.read(userSettingsProvider.notifier).deleteAccount();
                       if (res) {
                         return;
                       }

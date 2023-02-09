@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:pokemon_battle_logger/constants/theme_colors.dart';
 import 'package:pokemon_battle_logger/notifiers/home/pages/user.page.notifier.dart';
-import 'package:pokemon_battle_logger/notifiers/user/user.notifier.dart';
+import 'package:pokemon_battle_logger/notifiers/pokemon/pokemon.notifier.dart';
+import 'package:pokemon_battle_logger/notifiers/user/user_settings.notifier.dart';
 import 'package:pokemon_battle_logger/repos/user.services.dart';
 import 'package:pokemon_battle_logger/routing/app_routing.dart';
 import 'package:pokemon_battle_logger/states/home/pages/user.page.state.dart';
@@ -75,7 +76,13 @@ class UserPageView extends ConsumerWidget {
             child: Column(
               children: [
                 Button(
-                  onPressed: () async {},
+                  onPressed: () async {
+                    await ref.read(pokemonProvider.notifier).reset();
+                    await Future.delayed(Duration.zero, () async {
+                      await Navigator.of(context).pushNamed(AppRouting.pokemon);
+                    });
+                    await ref.read(userPageProvider.notifier).reset();
+                  },
                   buttonHeight: 50.0,
                   radius: 25.0,
                   icon: Icons.warning_amber_outlined,
@@ -96,7 +103,7 @@ class UserPageView extends ConsumerWidget {
                 ),
                 Button(
                   onPressed: () async {
-                    await ref.read(userProvider.notifier).reset();
+                    await ref.read(userSettingsProvider.notifier).reset();
                     await Future.delayed(Duration.zero, () async {
                       await Navigator.of(context).pushNamed(AppRouting.user);
                     });

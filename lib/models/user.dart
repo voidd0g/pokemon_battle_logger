@@ -7,9 +7,17 @@ class User {
   static const String displayNameField = 'display_name';
   static const String iconPathField = 'icon_path';
 
-  const User({required this.uid, required this.displayName, required this.iconPath});
+  const User({
+    required this.uid,
+    required this.displayName,
+    required this.iconPath,
+  });
 
-  User copy({String? newUid, String? newDisplayName, String? newIconPath}) {
+  User copy({
+    String? newUid,
+    String? newDisplayName,
+    String? newIconPath,
+  }) {
     return User(
       uid: newUid ?? uid,
       displayName: newDisplayName ?? displayName,
