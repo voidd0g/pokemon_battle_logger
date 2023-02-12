@@ -2,6 +2,7 @@ class Pokemon {
   final int pokedex;
   final int form;
   final String name;
+  final String hiraName;
   final int type1;
   final int type2;
   final int weight10;
@@ -15,6 +16,7 @@ class Pokemon {
   static const String pokedexField = 'pokedex';
   static const String formField = 'form';
   static const String nameField = 'name';
+  static const String hiraNameField = 'hiraname';
   static const String type1Field = 'type1';
   static const String type2Field = 'type2';
   static const String weight10Field = 'weight10';
@@ -29,6 +31,7 @@ class Pokemon {
     required this.pokedex,
     required this.form,
     required this.name,
+    required this.hiraName,
     required this.type1,
     required this.type2,
     required this.weight10,
@@ -44,6 +47,7 @@ class Pokemon {
     int? newPokedex,
     int? newForm,
     String? newName,
+    String? newHiraName,
     int? newType1,
     int? newType2,
     int? newWeight10,
@@ -58,6 +62,7 @@ class Pokemon {
       pokedex: newPokedex ?? pokedex,
       form: newForm ?? form,
       name: newName ?? name,
+      hiraName: newHiraName ?? hiraName,
       type1: newType1 ?? type1,
       type2: newType2 ?? type2,
       weight10: newWeight10 ?? weight10,
@@ -74,6 +79,7 @@ class Pokemon {
       : pokedex = data[pokedexField],
         form = data[formField],
         name = data[nameField],
+        hiraName = data[hiraNameField],
         type1 = data[type1Field],
         type2 = data[type2Field],
         weight10 = data[weight10Field],
@@ -89,6 +95,7 @@ class Pokemon {
       pokedexField: pokedex,
       formField: form,
       nameField: name,
+      hiraNameField: hiraName,
       type1Field: type1,
       type2Field: type2,
       weight10Field: weight10,

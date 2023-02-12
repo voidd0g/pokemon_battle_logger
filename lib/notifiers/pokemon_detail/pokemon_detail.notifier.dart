@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokemon_battle_logger/notifier_args/i_notifier_arg.dart';
 import 'package:pokemon_battle_logger/notifier_args/pokemon_detail/pokemon_detail.notifier.arg.dart';
@@ -38,10 +37,6 @@ class PokemonDetailNotifier extends StateNotifier<PokemonDetailState> implements
     }
     await PokemonServices.instance.getAllAvailablePokemons();
     await PokemonTrainedServices.instance.getAllAvailablePokemonsTrained(uid: (arg as PokemonDetailNotifierArg).uid);
-    if (kDebugMode) {
-      print(PokemonServices.instance.pokemons);
-      print(PokemonTrainedServices.instance.pokemonsTrainedByUsers[(arg).uid]);
-    }
     await Future.delayed(Duration.zero, () {
       state = state.copy(
         newStateName: PokemonDetailStateName.normal,

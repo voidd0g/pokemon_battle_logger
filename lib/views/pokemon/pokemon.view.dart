@@ -111,11 +111,16 @@ class PokemonView extends ConsumerWidget {
                                 Center(
                                   child: entry.value != null
                                       ? Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
                                             PlainText(
                                               text: entry.value!.nickname,
                                               weight: FontWeight.normal,
                                               size: 25,
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
                                             ),
                                             PlainText(
                                               text: PokemonServices.instance.pokemons!.where((element) => element.pokedex == entry.value!.pokedex && element.form == entry.value!.form).first.name,
